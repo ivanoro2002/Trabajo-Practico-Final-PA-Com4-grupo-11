@@ -1,9 +1,51 @@
+import uuid                        # MODULO PARA ALEATORIZAR UNA ID DE CADA LIBRO AGG (ALDANA)
+
 class Biblioteca: 
     def __init__(self):
         self.users = []
         self.libros = []
-        self.prestamos = []   
-               
+        self.prestamos = []
+        self.stock = 0              
+
+class Gestion_Libros:
+    def __init__(self):
+        self.libros = []
+        self.stock = 0
+
+    def agg_libro(self, libro):                   # DAR ALTA
+        for l in self.libros:
+            if l == libro:
+                return "Este libro ya existe."
+            else: 
+                self.libros.append(libro)                           
+                self.stock += 1                
+
+    def del_libro(self, id):            
+        for i in self.libros:
+            if i == id:
+                self.libros.remove(i)
+            else:
+                return "El libro no existe."
+
+    def modify_libro(self, isbn, new_titulo, new_cant_pags):    #ISBN = IDENTIFICADOR DE LIBROS
+        for self.isbn in self.libros:
+            if self.isbn == isbn:   
+                self.titulo = new_titulo                       
+                self.cant_pags = new_cant_pags
+            else:
+                return "Libro no encontrado."
+class Libro:
+    def __init__(self, titulo, autor, isbn, año_publicado, cant_pags):
+        self.titulo = titulo
+        self.autor = autor
+        self.isbn = isbn 
+        self.año_publicado = año_publicado
+        self.cant_pags = cant_pags
+        self.id = str(uuid.uuid4())               # ALDANA 
+
+    def __str__(self):                              
+        return f"{self.titulo} - {self.autor} - {self.isbn} - {self.año_publicado} - {self.cant_pags}"
+                
 class Gestion_Usuario:
     def __init__(self):
         self.users = []
@@ -42,40 +84,7 @@ class User(Person):
         super().__init__(nombre, apellido)
         self.dni = dni
         self.correo = correo
+            
 
-class Gestion_Libros:
-    def __init__(self, titulo, autor, isbn, año_publicado, cant_pags):
-        self.titulo = titulo
-        self.autor = autor
-        self.isbn = isbn 
-        self.año_publicado = año_publicado
-        self.cant_pags = cant_pags
-        self.disponible = True
-
-    def __str__(self):                              
-        f"{self.titulo} - {self.autor}"                 
-
-    def agg_libro(self, libro):                   # DAR ALTA
-        for l in self.libros:
-            if l == libro:
-                return "Este libro ya existe."
-            else:
-                self.libros.append(libro)                    
-    
-    def del_libro(self, isbn):            
-        for i in self.libros:
-            if i == isbn:
-                self.libros.remove(i)
-            else:
-                return "El libro no existe."
-
-    def modify_libro(self, isbn, new_titulo, new_cant_pags):    #ISBN = IDENTIFICADOR DE LIBROS (ID)
-        for self.isbn in self.libros:
-            if self.isbn == isbn:   
-                self.titulo = new_titulo                       
-                self.cant_pags = new_cant_pags
-            else:
-                return "Libro no encontrado."
-
-
-
+libro1 = Libro("Cien años de soledad", "Gabriel García Márquez", 234, 1989, 50)
+print(libro1)

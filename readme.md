@@ -19,3 +19,10 @@ Tecnicos:
 - Al menos un decorador propio e integrarlo dentro del sistema. PENDIENTE
 - Al menos una metaclase (type) o una derivada de type. PENDIENTE
 - Al menos un patrón de diseño, debidamente justificado. PENDIENTE
+
+ADICIONAL
+- Cant de stock (ejemplares) de libros, 1 o más. Si es más de un ejemplar necesita ID obligatoriamente un identificador (ID) porque el ISBN es el mismo para todos los ejemplares y no nos sirve para esta funcionalidad. HECHO
+- UML incluido en el repositorio.
+- README.md confeccionado correctamente.
+- SINGLETON para separar bibliotecas (Si se crea más de una, para identificarla correctamente) -> Diseños de patron.
+- Admin de datos (agg libros) -> JSON o libreria para cargar libros inicialmente.
