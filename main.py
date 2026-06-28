@@ -1,95 +1,136 @@
-import uuid                        # MODULO PARA ALEATORIZAR UNA ID DE CADA LIBRO AGG (ALDANA)
+import uuid
+from datetime import date
 
-class Biblioteca: 
-    def __init__(self):
-        self.users = []
+class Biblioteca:
+    def _init_(self):
         self.libros = []
-        self.prestamos = []         
+        self.users = []
+        self.prestamos = []
+
+class SingletonMeta(type):
+    _instancias = {}
+    def _call_(cls, *args, **kwargs):
+        if cls not in cls._instancias:
+            cls.instancias[cls] = super().call_(*args, **kwargs)
+        return cls._instancias[cls]
+
+def reg_info(func):
+    def func_retorno(*args, **kwargs):
+        print("\nEjecutando operación...")
+        resultado = func(*args, **kwargs)
+        print(resultado)
+        return resultado
+    return func_retorno
 
 class Libro:
-    def __init__(self, titulo, autor, isbn, año_publicado, cant_pags):
+    def _init_(self, titulo, autor, isbn, año_publicado, cant_pags):
         self.titulo = titulo
         self.autor = autor
-        self.isbn = isbn 
-        self.año_publicado = año_publicado                                     # A. DEBE SUBIR LIBROS CORRECTAMENTE (ACÁ)
+        self.isbn = isbn
+        self.año_publicado = año_publicado
         self.cant_pags = cant_pags
-        self.id = str(uuid.uuid4()) 
-        self.stock = 0               
+        self.id = str(uuid.uuid4())      # Identificador único del ejemplar
 
-    def __str__(self):                              
-        return f"{self.titulo} - {self.autor} - {self.isbn} - {self.año_publicado} - {self.cant_pags}"
+    def _str_(self):
+        return (f"Título: {self.titulo} | "
+                f"Autor: {self.autor} | "
+                f"ISBN: {self.isbn} | "
+                f"ID: {self.id}")
+
 
 class Person:
-    def __init__(self, nombre, apellido):
+    def _init_(self, nombre, apellido):
         self.nombre = nombre
         self.apellido = apellido
+    def _str_(self):
+        return f"{self.nombre} {self.apellido}"
 
-    def __str__(self):                              
-        return f"{self.nombre} - {self.apellido}"
-    
-class User(Person):     
-    def __init__(self, nombre, apellido, dni, correo):
-        super().__init__(nombre, apellido)
+class User(Person):
+    def _init_(self, nombre, apellido, dni, correo):
+        super()._init_(nombre, apellido)
         self.dni = dni
         self.correo = correo
+    def _str_(self):
+        return (f"Nombre: {self.nombre} {self.apellido} | "
+                f"DNI: {self.dni} | "
+                f"Correo: {self.correo}")
     
-    def __str__(self):                              
-        return f"{self.nombre} - {self.apellido} - {self.dni} - {self.correo}"
+# GESTIÓN LIBROS
 
-class Gestion_Libros():
-    def __init__(self):
-        self.libros = []
-        self.disponible = True
-        self.stock = 0
+class Gestion_Libros(metaclass=SingletonMeta):
+    def _init_(self, biblioteca):
+        self.biblioteca = biblioteca
 
-    def agg_libro(self, libro):                   # DAR ALTA      
-        if libro == self.libros:
-            return "Este libro ya existe."
-        else: 
-            self.libros.append(libro)                        
-            self.stock += 1                        
+    @reg_info
+    def agg_libro(self, libro):
+        self.biblioteca.libros.append(libro)
+        return f"Se agregó un ejemplar de {libro.titulo}"
 
-    def del_libro(self, id):            
-        for i in self.libros:
-            if i.id == id:
-                self.libros.remove(i)
-                self.stock -= 1
-            else:
-                return "El libro no existe."
+    @reg_info
+    def del_libro(self, id_libro):
+        for libro in self.biblioteca.libros:
+            if libro.id == id_libro:
+                self.biblioteca.libros.remove(libro)
+                return f"El ejemplar '{libro.titulo}' fue eliminado."
+        return "Ejemplar no encontrado."
 
-    def modify_libro(self, isbn, new_titulo, new_cant_pags):    #ISBN = IDENTIFICADOR DE LIBROS
-        for l in self.libros:
-            if l.isbn == isbn:   
-                l.titulo = new_titulo                       
-                l.cant_pags = new_cant_pags
+    @reg_info
+    def modify_libro(self, id_libro, nuevo_titulo, nuevas_paginas):
+        for libro in self.biblioteca.libros:
+            if libro.id == id_libro:
+                libro.titulo = nuevo_titulo
+                libro.cant_pags = nuevas_paginas
+                return "Libro modificado correctamente."
         return "Libro no encontrado."
-                
-class Gestion_Usuario:
-    def __init__(self):
-        self.users = []
 
+    @reg_info
+    def listar_libros(self):
+        if not self.biblioteca.libros:
+            return "No hay libros registrados."
+        print("\n===== LISTA DE LIBROS =====")
+        for libro in self.biblioteca.libros:
+            print(libro)
+        return "Listado completado."
+
+    @reg_info
+    def consultar_stock(self, isbn):
+        cantidad = sum(1 for libro in self.biblioteca.libros if libro.isbn == isbn)
+        return f"Stock disponible para ISBN {isbn}: {cantidad}"
+
+# GESTIÓN USUARIOS
+
+class Gestion_Usuario(metaclass=SingletonMeta):
+    def _init_(self, biblioteca):
+        self.biblioteca = biblioteca
+
+    @reg_info
     def agg_user(self, usuario):
-        if usuario == self.users:
+        if any(u.dni == usuario.dni for u in self.biblioteca.users):
             return "El usuario ya existe."
-        self.users.append(usuario)
+        self.biblioteca.users.append(usuario)
+        return f"El usuario '{usuario.nombre}' fue agregado correctamente."
 
+    @reg_info
     def del_user(self, dni):
-        for u in self.users:
-            if u.dni == dni:
-                self.users.remove(u)                
-        return "El usuario no existe."    
+        for usuario in self.biblioteca.users:
+            if usuario.dni == dni:
+                self.biblioteca.users.remove(usuario)
+                return f"El usuario {usuario.nombre} fue eliminado."
+        return "Usuario no encontrado."
 
-    def modify_user(self, dni, new_correo):
-        for u in self.users:                      
-            if u.dni == dni:                          
-                self.correo = new_correo
-        return "El usuario no existe en la base de datos."
+    @reg_info
+    def modify_user(self, dni, nuevo_correo):
+        for usuario in self.biblioteca.users:
+            if usuario.dni == dni:
+                usuario.correo = nuevo_correo
+                return "Usuario modificado correctamente."
+        return "Usuario no encontrado."
 
-biblioteca = Biblioteca()         # A. 
-gestor_l = Gestion_Libros()         # A.
-gestor_p = Gestion_Usuario()
-libro1 = Libro("Cien años de soledad", "Gabriel García Márquez", 25, 1950, 66)          
-print(libro1)
-gestor_l.agg_libro(libro1)          # A.
-persona1 = User("Leonel", "Politi", 45489751654, "alexis@gmail.com")
-print(persona1)
+    @reg_info
+    def listar_users(self):
+        if not self.biblioteca.users:
+            return "No hay usuarios registrados."
+        print("\n===== LISTA DE USUARIOS =====")
+        for usuario in self.biblioteca.users:
+            print(usuario)
+        return "Listado completado."
