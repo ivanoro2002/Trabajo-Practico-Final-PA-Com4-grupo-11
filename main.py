@@ -134,3 +134,93 @@ class Gestion_Usuario(metaclass=SingletonMeta):
         for usuario in self.biblioteca.users:
             print(usuario)
         return "Listado completado."
+    
+ class Prestamo:
+
+    def _init_(self, libro, usuario):
+        self.libro = libro
+        self.usuario = usuario
+        self.fecha_prestamo = date.today()
+        self.fecha_devolucion = None
+
+    @property
+    def activo(self):
+        return self.fecha_devolucion is None
+
+    def devolver(self):
+        self.fecha_devolucion = date.today()
+
+    def _str_(self):
+        estado = "Activo" if self.activo else "Devuelto"
+
+        return (f"Libro: {self.libro.titulo} | "
+                f"Usuario: {self.usuario.nombre} {self.usuario.apellido} | "
+                f"Préstamo: {self.fecha_prestamo} | "
+                f"Devolución: {self.fecha_devolucion} | "
+                f"Estado: {estado}")
+    
+class Gestion_Prestamos(metaclass=SingletonMeta):
+
+    def _init_(self, biblioteca):
+        self.biblioteca = biblioteca
+
+    def libro_prestado(self, id_libro):
+        return any(
+            prestamo.libro.id == id_libro and prestamo.activo
+            for prestamo in self.biblioteca.prestamos
+        )
+
+    @reg_info
+    def registrar_prestamo(self, isbn, dni):
+
+        usuario = None
+        for u in self.biblioteca.users:
+            if u.dni == dni:
+                usuario = u
+                break
+
+        if usuario is None:
+            return "Usuario no encontrado."
+
+        libro = None
+        for l in self.biblioteca.libros:
+            if l.isbn == isbn and not self.libro_prestado(l.id):
+                libro = l
+                break
+
+        if libro is None:
+            return "No hay ejemplares disponibles."
+
+        prestamo = Prestamo(libro, usuario)
+        self.biblioteca.prestamos.append(prestamo)
+
+        return "Préstamo registrado correctamente."
+
+    @reg_info
+    def devolver_libro(self, isbn, dni):
+
+        for prestamo in self.biblioteca.prestamos:
+
+            if (prestamo.libro.isbn == isbn
+                    and prestamo.usuario.dni == dni
+                    and prestamo.activo):
+
+                prestamo.devolver()
+                return "Libro devuelto correctamente."
+
+        return "No existe un préstamo activo para ese usuario."
+
+    @reg_info
+    def listar_prestamos_activos(self):
+
+        activos = [p for p in self.biblioteca.prestamos if p.activo]
+
+        if not activos:
+            return "No hay préstamos activos."
+
+        print("\n===== PRÉSTAMOS ACTIVOS =====")
+
+        for prestamo in activos:
+            print(prestamo)
+
+        return "Listado completado."
