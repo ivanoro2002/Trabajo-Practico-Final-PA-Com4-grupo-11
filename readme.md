@@ -1,28 +1,21 @@
-Desarrollar: Sist. Gestiíon de Biblioteca Digital. Funciones: Administrar libros, usuarios y prestamos.
+Este sistema de biblioteca permite administrar libros, usuarios y prestamos. Este lo dividimos en distintos gestores para mayor organización y que cada uno cumpla una función concreta.
 
-Requerimentos - 
-Gestión Libros (Titulo, Autor, ISBN, Año Publicado, Cantidad de pags, etc)
-- Operaciones (Alta, Modificación, Baja, Listado)
+Gestión Libros: Permite alta, baja, modificación y listado de libros, concluyendo con la consulta de stock de ejemplares mediante ISBN. En relación a esto, hemos contemplado la existencia de más de un ejemplar de un libro, por lo tanto, incluimos UUID para aleatorizar una ID única a cada libro. 
 
-Gestión Usuarios (Nombre, Apellido, DNI, CORREO, etc)
-- Operaciones (Alta, Modificación, Baja, Listado)
+Gestión Usuarios: Realiza la alta, baja, modificación y listado de usuarios en el sistema. 
 
-Gestión Prestamos (Registar prestamos, devoluciones, consultar prestamos activos).
-- Un libro no podrá prestarse si ya poseé un préstamo activo.
-- Se deberá registrar fecha de préstamo y devolución.
+Gestión Prestamos: Registra prestamos, devuelve libros y consulta prestamos activos, si un ejemplar ya tiene un prestámo, no puede volver a pedirse, además, registra de manera automatica la fecha de prestamo y devolución. 
 
-Tecnicos: 
-- Al menos una jerarquia de herencia. HECHO
-- Al menos un comportamiento polimorfico. HECHO
-- Al menos una relación de agrupación.  HECHO
-- Al menos una relación de composición. HECHO
-- Al menos un decorador propio e integrarlo dentro del sistema. PENDIENTE
-- Al menos una metaclase (type) o una derivada de type. PENDIENTE
-- Al menos un patrón de diseño, debidamente justificado. PENDIENTE
+En cuanto al decorador, lo implementamos dentro de reg_info, está registrará el exito de cada operación en el sistema sin repetir código. 
 
-ADICIONAL
-- Cant de stock (ejemplares) de libros, 1 o más. Si es más de un ejemplar necesita ID obligatoriamente un identificador (ID) porque el ISBN es el mismo para todos los ejemplares y no nos sirve para esta funcionalidad. HECHO
-- UML incluido en el repositorio.
-- README.md confeccionado correctamente.
-- SINGLETON para separar bibliotecas (Si se crea más de una, para identificarla correctamente) -> Diseños de patron.
-- Admin de datos (agg libros) -> JSON o libreria para cargar libros inicialmente.
+Hemos optado por el patrón de diseño "SINGLETON" mediante una metaclase. Este garantiza la existencia de instancias únicas de cada gestor, evitando que se creen muchos objetos que administren listas diferentes a las originales (usuarios, libros, prestamos). 
+
+Los conceptos de POO se ven reflejados en:
+
+Herencia: Clase USER hereda de PERSON, reutilizando sus atributos. 
+Polimorfismo: Mediante el metodo _str_() en distintas clases para mostrar su información de manera personalizada.
+Composición: la clase Biblioteca contiene los libros, usuarios y préstamos, siendo la que organiza toda la información del sistema.
+
+
+#diagrama de clases del codigo
+![alt text](<diagrama de clases tp final PA.jpg>)
