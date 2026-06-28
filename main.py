@@ -97,7 +97,7 @@ class Gestion_Libros(metaclass=SingletonMeta):
         cantidad = sum(1 for libro in self.biblioteca.libros if libro.isbn == isbn)
         return f"Stock disponible para ISBN {isbn}: {cantidad}"
 
-# GESTIÓN USUARIOS
+ # GESTIÓN USUARIOS
 
 class Gestion_Usuario(metaclass=SingletonMeta):
     def _init_(self, biblioteca):
@@ -135,7 +135,7 @@ class Gestion_Usuario(metaclass=SingletonMeta):
             print(usuario)
         return "Listado completado."
     
- class Prestamo:
+class Prestamo:
 
     def _init_(self, libro, usuario):
         self.libro = libro
