@@ -1,3 +1,7 @@
+Integrantes: Alexis Politi, Aldana Ibarra, Ivan Valicenti Orosco
+
+
+
 Este sistema de biblioteca permite administrar libros, usuarios y prestamos. Este lo dividimos en distintos gestores para mayor organización y que cada uno cumpla una función concreta.
 
 Gestión Libros: Permite alta, baja, modificación y listado de libros, concluyendo con la consulta de stock de ejemplares mediante ISBN. En relación a esto, hemos contemplado la existencia de más de un ejemplar de un libro, por lo tanto, incluimos UUID para aleatorizar una ID única a cada libro. 
